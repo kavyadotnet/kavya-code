@@ -1,0 +1,103 @@
+﻿
+@model IEnumerable<ManageMovies.Models.Movie>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="pageheading">
+            <h1>Movies List</h1>
+            @Html.ActionLink("Create Movie", "CreateMovie", null, new { @class = "btn btn-success btn-rounded btn-ef btn-ef-5 btn-ef-5b mb-10" })
+        </div>
+        <div class="panel panel-primary list-panel" id="list-panel">
+            
+            <br/><br />
+            <div class="panel-heading list-panel-heading">
+                <h1 class="panel-title list-panel-title">Movies</h1>
+            </div>
+            <div class="panel-body">
+                <table id="assets-data-table" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Movie Title</th>
+                            <th>Genre</th>
+                            <th>Release Year</th>
+                            <th>Amount</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movie in Model)
+                        {
+                            <tr>
+                                <td>@movie.MovieTitle</td>
+                                <td>@movie.Genre</td>
+                                <td>@movie.ReleaseYear</td>
+                                <td>@movie.Amount</td>
+                                <td>@Html.ActionLink("EDIT", "EditMovie", new { id = @movie.MovieId }, new { @class = "btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b mb-10"})</td>
+                                <td><button id='btndelete' class='btn btn-danger btn-rounded btn-ef btn-ef-5 btn-ef-5b mb-10' onclick='btndeleteclick("@movie.MovieId")'><i class='fa fa-trash'></i> <span>Delete</span></button></td>
+                              
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+    <script type="text/javascript">
+
+     $(document).ready(function () {
+
+         $("#assets-data-table").DataTable();
+     });
+     function btndeleteclick(id) {
+         var objdelete = false;
+         swal({
+             title: "Are you sure?",
+             text: "You will not be able to recover this record!",
+             type: "warning",
+             showCancelButton: true,
+             confirmButtonColor: '#DD6B55',
+             confirmButtonText: 'Yes, I am sure!',
+             cancelButtonText: "No, cancel it!",
+             closeOnConfirm: false,
+             closeOnCancel: false
+         },
+         function (isConfirm) {
+             if (isConfirm) {
+                 objdelete = true;
+                 var values = { 'id': id };
+                 $.ajax({
+                     type: 'POST',
+                     url: '@Url.Action("DeleteMovie", "Movies")',
+                     contentType: 'application/json;charset=utf-8',
+                     dateType: "json",
+                     async: true,
+                     data: JSON.stringify(values),
+                     success: function (result) {
+                         swal({
+                             title: 'Success!',
+                             text: 'Record Deleted Successfully!',
+                             type: 'success'
+                         }, function () {
+                             
+                         });
+                     }
+                 });
+             }
+         });
+         
+     }
+
+    
+    </script>
+
+}
+
+
+  
+
